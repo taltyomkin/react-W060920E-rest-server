@@ -4,6 +4,14 @@ const { Card, validateCard, generateBizNumber } = require('../models/card');
 const auth = require('../middleware/auth');
 const router = express.Router();
 
+router.get("/my-cards", auth, async (req,res) => {
+  if(!req.user.biz) {
+    return res.status(401).send("Access denied.");
+  }
+  const cards = await Card.find({ user_id: req.user._id});
+  res.send(cards);
+})
+
 router.delete('/:id', auth, async (req, res) => {
 
   const card = await Card.findOneAndRemove({ _id: req.params.id, user_id: req.user._id });
